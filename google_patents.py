@@ -113,19 +113,19 @@ for file_name in file_name_list:
     time.sleep(20)
 
     if r.status_code != requests.codes.ok:
-
-        for cookies in cookies_list:
-            if cookies != cookies_now:
-                try:
-                    r = requests.get(url,
-                                    headers=headers,
-                                    cookies=cookies)
-                except:
-                    time.sleep(30)
-                time.sleep(20)
-                if r.status_code == requests.codes.ok:
-                    cookies_now = cookies
-                    break
+        for i in range(4):
+            for cookies in cookies_list:
+                if cookies != cookies_now:
+                    try:
+                        r = requests.get(url,
+                                        headers=headers,
+                                        cookies=cookies)
+                    except:
+                        time.sleep(30)
+                    time.sleep(20)
+                    if r.status_code == requests.codes.ok:
+                        cookies_now = cookies
+                        break
 
     if r.status_code != requests.codes.ok:
         send_error_email('爬虫停止')
