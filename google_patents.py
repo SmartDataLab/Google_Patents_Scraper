@@ -8,6 +8,12 @@ import emailbox
 key_file = pd.read_csv('KEY_WORDS.csv')
 base_url = "https://patents.google.com"
 
+dirs = './google_patents'
+
+if not os.path.exists(dirs):
+    os.makedirs(dirs)
+
+
 
 def send_error_email(message):
     import emailbox as emb
