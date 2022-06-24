@@ -107,7 +107,6 @@ for file_name in file_name_list:
     try:
         r = requests.get(url,
                         headers=headers,
-                        proxies=proxies,
                         cookies=cookies_now)
     except:
         time.sleep(30)
@@ -120,7 +119,6 @@ for file_name in file_name_list:
                 try:
                     r = requests.get(url,
                                     headers=headers,
-                                    proxies=proxies,
                                     cookies=cookies)
                 except:
                     time.sleep(30)
