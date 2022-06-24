@@ -126,6 +126,9 @@ for file_name in file_name_list:
                     if r.status_code == requests.codes.ok:
                         cookies_now = cookies
                         break
+            if r.status_code == requests.codes.ok:
+                cookies_now = cookies
+                break
 
     if r.status_code != requests.codes.ok:
         send_error_email('爬虫停止')
