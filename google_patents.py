@@ -3,10 +3,17 @@ import pandas as pd
 import os
 import random
 import time
-import emailbox
 
+
+insant_name = 1
 key_file = pd.read_csv('KEY_WORDS.csv')
 base_url = "https://patents.google.com"
+
+dirs = './google_patents'
+
+if not os.path.exists(dirs):
+    os.makedirs(dirs)
+
 
 
 def send_error_email(message):
@@ -24,6 +31,7 @@ def send_error_email(message):
 key_words = []
 for i in range(len(key_file['KEY_WORDS'])):
     key_words.append(key_file['KEY_WORDS'][i].strip())
+print(key_words)
 
 date_list = []
 for year in range(2022, 1990, -1):
@@ -92,17 +100,12 @@ for file_name in file_name_list:
     headers['user_agent'] = user_agent_pool[random.randrange(
         0, len(user_agent_pool))]
     #clash翻墙端口
-    proxies = {
-        'http': 'http://localhost:7890',
-        'https': 'http://localhost:7890'
-    }
-    print(proxies)
+
     print(file_name)
     try:
         r = requests.get(url,
                         headers=headers,
-                        proxies=proxies,
-                        cookies=cookies_now)
+                        )
     except:
         time.sleep(30)
     time.sleep(20)
@@ -114,8 +117,7 @@ for file_name in file_name_list:
                 try:
                     r = requests.get(url,
                                     headers=headers,
-                                    proxies=proxies,
-                                    cookies=cookies)
+                                    )
                 except:
                     time.sleep(30)
                 time.sleep(20)
@@ -124,7 +126,8 @@ for file_name in file_name_list:
                     break
 
     if r.status_code != requests.codes.ok:
-        send_error_email('爬虫停止')
+        message = '爬虫停止' + str(insant_name)
+        send_error_email(message)
         print('爬虫停止')
         break
 
