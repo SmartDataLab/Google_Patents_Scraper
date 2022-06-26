@@ -8,12 +8,11 @@ import emailbox
 key_file = pd.read_csv('KEY_WORDS.csv')
 base_url = "https://patents.google.com"
 
-dirs = './google_patents'
-
-if not os.path.exists(dirs):
-    os.makedirs(dirs)
-
-
+safari_cookie = {}
+with open('cookies_safari.txt') as f:
+    for line in f.readlines():
+        name,value = line.split('=',1)
+        safari_cookie[name.strip()] = value.strip()
 
 def send_error_email(message):
     import emailbox as emb
@@ -77,15 +76,17 @@ user_agent_pool = [
 f = open(r'test.txt', 'r')  #打开所保存的cookies内容文件
 cookies_list = []
 
-for line in f.readlines():
-    cookies = {}
-    for i in line.split(';'):  #按照字符：进行划分读取
-        #其设置为1就会把字符串拆分成2份
-        name, value = i.strip().split('=', 1)
-        cookies[name] = value  #为字典cookies添加内容
-    cookies_list.append(cookies)
-    cookies_list.append([])
+# for line in f.readlines():
+#     cookies = {}
+#     for i in line.split(';'):  #按照字符：进行划分读取
+#         #其设置为1就会把字符串拆分成2份
+#         name, value = i.strip().split('=', 1)
+#         cookies[name] = value  #为字典cookies添加内容
+#     cookies_list.append(cookies)
+#     cookies_list.append([])
 
+cookies_list.append(safari_cookie)
+cookies_list.append([])
 cookies_now = cookies_list[0]
 
 for file_name in file_name_list:
@@ -107,28 +108,27 @@ for file_name in file_name_list:
     try:
         r = requests.get(url,
                         headers=headers,
+                        proxies=proxies,
                         cookies=cookies_now)
     except:
         time.sleep(30)
     time.sleep(20)
 
     if r.status_code != requests.codes.ok:
-        for i in range(4):
-            for cookies in cookies_list:
-                if cookies != cookies_now:
-                    try:
-                        r = requests.get(url,
-                                        headers=headers,
-                                        cookies=cookies)
-                    except:
-                        time.sleep(30)
-                    time.sleep(20)
-                    if r.status_code == requests.codes.ok:
-                        cookies_now = cookies
-                        break
-            if r.status_code == requests.codes.ok:
-                cookies_now = cookies
-                break
+
+        for cookies in cookies_list:
+            if cookies != cookies_now:
+                try:
+                    r = requests.get(url,
+                                    headers=headers,
+                                    proxies=proxies,
+                                    cookies=cookies)
+                except:
+                    time.sleep(30)
+                time.sleep(20)
+                if r.status_code == requests.codes.ok:
+                    cookies_now = cookies
+                    break
 
     if r.status_code != requests.codes.ok:
         send_error_email('爬虫停止')
